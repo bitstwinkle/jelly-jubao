@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: jelly-jubao
+  profiles:
+    active: local
+
+server:
+  port: 18888
+

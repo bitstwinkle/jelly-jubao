@@ -1,0 +1,192 @@
+/*
+ * ** github: https://github.com/bitstwinkle ***
+ * ** gitee: https://gitee.com/bitstwinkle ***
+ * ** 比特闪耀-技术让世界更美丽 ***
+ * Copyright © 2020-2030 Hangzhou BitsTwinkle Information Technology Co.,Ltd. All rights reserved.
+ */
+
+group 'tech.bitstwinkle.jelly'
+version '1.0.0'
+
+ext {
+    /******************** 公共依赖版本参数 ********************/
+    SPRING_CLOUD_VERSION = 'Greenwich.SR3'
+    SPRING_BOOT_VERSION = '2.1.9.RELEASE'
+    SPRING_DEPENDENCY_MANAGEMENT_VERSION = '1.0.8.RELEASE'
+    NACOS_VERSION = '0.9.0.RELEASE'
+
+    /******************** JELLY依赖版本参数 ********************/
+    JELLY_COMMONS = '1.0.4-SNAPSHOT'
+    JELLY_PLATFORM = '1.0.7-SNAPSHOT'
+    JELLY_ID_FACTORY = '1.0.1-SNAPSHOT'
+}
+
+buildscript {
+    repositories {
+        mavenLocal()
+
+        maven {
+            url 'https://maven.aliyun.com/repository/public'
+        }
+    }
+}
+
+subprojects {
+
+    /**
+     * 以jubao-开头的子目录，跳出
+     */
+    if(!project.name.startsWith('jubao-')) {
+
+        repositories {
+            mavenLocal()
+
+            maven {
+                url 'https://maven.aliyun.com/repository/public'
+            }
+
+            maven {
+                url 'https://oss.sonatype.org/content/repositories/snapshots'
+            }
+        }
+
+        apply plugin: 'java'
+        apply plugin: 'maven-publish'
+        apply plugin: 'signing'
+
+        group rootProject.group
+
+        sourceCompatibility = 1.8
+
+        compileJava {
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
+            [compileJava]*.options*.encoding = 'UTF-8'
+        }
+
+        compileTestJava {
+            sourceCompatibility = 1.8
+            targetCompatibility = 1.8
+            [compileTestJava]*.options*.encoding = 'UTF-8'
+        }
+
+        task sourcesJar(type: Jar) {
+            from sourceSets.main.allJava
+            classifier = 'sources'
+        }
+
+        publishing {
+            publications {
+                mavenJava(MavenPublication) {
+                    afterEvaluate {
+                        println("[publish] artifact: ${project.group}:${project.name}:${project.version}")
+
+                        groupId project.group
+                        artifactId project.name
+                        version project.version
+                        from components.java
+                        artifact sourcesJar
+
+                        pom {
+                            name = "bitstwinkle-jelly"
+                            description = "bitstwinkle-jelly"
+                            url = "https://github.com/bitstwinkle/jelly"
+                            licenses {
+                                license {
+                                    name = "The Apache License, Version 2.0"
+                                    url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id = 'bitstwinkle'
+                                    name = 'bitstwinkle'
+                                    email = 'bitstwinkle@yeah.net'
+                                }
+                            }
+                            scm {
+                                connection = "scm:git:https://github.com/bitstwinkle/jelly.git"
+                                developerConnection = "scm:git:https://github.com/bitstwinkle/jelly.git"
+                                url = "https://github.com/bitstwinkle/jelly"
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            repositories {
+                maven {
+                    afterEvaluate {
+                        def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                        def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+                        url = project.version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+                        println("[publish] to: ${url}")
+                        credentials {
+                            username = "${NEXUS_USERNAME}"
+                            password = "${NEXUS_PASSWORD}"
+                        }
+                    }
+                }
+            }
+        }
+
+        signing {
+            sign publishing.publications.mavenJava
+        }
+
+        if(project.name.startsWith('facade-')){
+            dependencies {
+                implementation "tech.bitstwinkle.jelly:commons:${JELLY_COMMONS}"
+                implementation "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
+                implementation "org.springframework.cloud:spring-cloud-openfeign-core"
+
+                testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
+                testImplementation('org.mockito:mockito-junit-jupiter:2.19.1')
+                testImplementation('org.junit.jupiter:junit-jupiter-engine:5.2.0')
+                testImplementation('org.junit.vintage:junit-vintage-engine:5.2.0')
+                testImplementation('org.junit.platform:junit-platform-launcher:1.2.0')
+            }
+        }else if (project.name.startsWith('server-') || project.name.startsWith('z-')) {
+            configurations {
+                developmentOnly
+                runtimeClasspath {
+                    extendsFrom developmentOnly
+                }
+            }
+
+            dependencies {
+                /**
+                 * JELLY库依赖
+                 */
+                implementation "tech.bitstwinkle.jelly:commons:${JELLY_COMMONS}"
+                implementation "tech.bitstwinkle.jelly:platform:${JELLY_PLATFORM}"
+                implementation "tech.bitstwinkle.jelly:id-factory:${JELLY_ID_FACTORY}"
+
+
+                implementation "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
+                implementation "org.springframework.boot:spring-boot-starter-data-jpa:${SPRING_BOOT_VERSION}"
+                implementation "org.springframework.boot:spring-boot-starter-aop:${SPRING_BOOT_VERSION}"
+
+                implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+                implementation 'org.springframework.cloud:spring-cloud-starter'
+                implementation "org.springframework.cloud:spring-cloud-starter-alibaba-nacos-discovery:${NACOS_VERSION}"
+
+                runtime('mysql:mysql-connector-java:8.0.17')
+
+                developmentOnly "org.springframework.boot:spring-boot-devtools:${SPRING_BOOT_VERSION}"
+
+                testImplementation "org.springframework.boot:spring-boot-starter-test:${SPRING_BOOT_VERSION}"
+                testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
+                testImplementation('org.mockito:mockito-junit-jupiter:2.19.1')
+                testImplementation("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+                testImplementation("org.junit.vintage:junit-vintage-engine:5.2.0")
+                testImplementation("org.junit.platform:junit-platform-launcher:1.2.0")
+            }
+
+        }
+
+    }
+
+}
+

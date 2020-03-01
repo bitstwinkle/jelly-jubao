@@ -1,0 +1,51 @@
+/*
+ * ** github: https://github.com/bitstwinkle ***
+ * ** gitee: https://gitee.com/bitstwinkle ***
+ * ** 比特闪耀-技术让世界更美丽 ***
+ * Copyright © 2020-2030 Hangzhou BitsTwinkle Information Technology Co.,Ltd. All rights reserved.
+ */
+
+plugins {
+    id 'org.springframework.boot' version "${SPRING_BOOT_VERSION}"
+    id 'io.spring.dependency-management' version "${SPRING_DEPENDENCY_MANAGEMENT_VERSION}"
+}
+
+version '1.0.0-SNAPSHOT'
+
+dependencies {
+    implementation(project(':jubao-account-center:server-account-center'))
+    implementation(project(':jubao-billing-center:server-billing-center'))
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${SPRING_CLOUD_VERSION}"
+        mavenBom "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
+    }
+}
+
+
+task copyToTarget(type: Copy) {
+    from "${getBuildDir()}/libs"
+    into "${rootDir}/target"
+    rename { String fileName ->
+        def pureArchivesBaseName = getArchivesBaseName().replaceAll("__[0-9]+", '')
+        def newName = fileName.replace("${getArchivesBaseName()}", "${pureArchivesBaseName}")
+        newName = newName.replace("-${project.version}", '')
+        println "[copy to target]-->>${getBuildDir()}/libs/${fileName}[" + file("${getBuildDir()}/libs/${fileName}").exists() + "]  => ${rootDir}/target/${newName}"
+        return newName
+    }
+}
+
+task dumpTarget() {
+    def targets = file("${rootDir}/target").listFiles()
+    for(def f in targets){
+        println "[target]-->>${f.getAbsolutePath()}"
+    }
+}
+
+task cleanTarget() {
+    def tree = fileTree("${rootDir}/target")
+    println "[clean target]$tree.dir.absolutePath"
+    delete(tree.dir)
+}

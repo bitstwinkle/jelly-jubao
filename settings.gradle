@@ -1,0 +1,11 @@
+rootProject.name = 'jelly-jubao'
+
+include 'jubao-account-center'
+include 'jubao-account-center:facade-account-center'
+include 'jubao-account-center:server-account-center'
+
+include 'jubao-billing-center'
+include 'jubao-billing-center:facade-billing-center'
+include 'jubao-billing-center:server-billing-center'
+
+include('z-startup')

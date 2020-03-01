@@ -1,0 +1,48 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+  jpa:
+    show-sql: false
+    open-in-view: false
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/bitstwinkle_jelly?useSSL=false&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useCompression=true
+    username: bitstwinkle
+    password: bitstwinkle
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  redis:
+    host: localhost
+    port: 6379
+    password:
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 60000
+  logging:
+    level:
+      com.*.facade.*: INFO
+      tech.*.facade.*: INFO
+
+
+#watt:
+#  aliyun:
+#    access-key: LTAI4FkTPgp6Y5ZneEt4yTp3
+#    secret: O8JRhJpUDlkz0SJGck0iS3XZ5RBcvu
+#    mq:
+#      default-instance: http://MQ_INST_1002266902363761_BbbwCLv4.mq-internet-access.mq-internet.aliyuncs.com:80
+#
+#  timingtask:
+#    # 未处理订单定时任务
+#    OrderProcess:
+#      group: ORDER_PROCESS_UNIT
+#      code: PREORDER_PROCESS
+#      cron: 1-2 0/1 * * * ? *
+
+

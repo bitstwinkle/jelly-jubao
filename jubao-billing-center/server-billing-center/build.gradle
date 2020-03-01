@@ -1,0 +1,25 @@
+/*
+ * ** github: https://github.com/bitstwinkle ***
+ * ** gitee: https://gitee.com/bitstwinkle ***
+ * ** 比特闪耀-技术让世界更美丽 ***
+ * Copyright © 2020-2030 Hangzhou BitsTwinkle Information Technology Co.,Ltd. All rights reserved.
+ */
+
+plugins {
+    id 'io.spring.dependency-management' version "${SPRING_DEPENDENCY_MANAGEMENT_VERSION}"
+}
+
+version '1.0.0-SNAPSHOT'
+
+dependencies {
+    compile(project(':jubao-billing-center:facade-billing-center'))
+
+    implementation('com.googlecode.aviator:aviator:4.2.10')
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${SPRING_CLOUD_VERSION}"
+        mavenBom "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
+    }
+}
