@@ -5,5 +5,5 @@ spring:
     active: local
 
 server:
-  port: 18888
+  port: 18889
 

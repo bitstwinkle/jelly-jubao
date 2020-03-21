@@ -1,0 +1,29 @@
+<included>
+
+
+  <property name="JUBAO_BILL_INFO_LOG" value="common-info-jubao-bill.log"/>
+
+  <appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="JUBAO_BILL_INFO_FILE">
+    <file>${LOG_HOME}/${JUBAO_BILL_INFO_LOG}</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_HOME}/${JUBAO_BILL_INFO_LOG}.%d{yyyy-MM-dd}</fileNamePattern>
+      <maxHistory>10</maxHistory>
+    </rollingPolicy>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>${COMMON_FILE_LOG_PATTERN}</Pattern>
+    </layout>
+  </appender>
+
+
+  <logger additivity="false" level="${JELLY_LOG_LEVEL}" name="tech.bitstwinkle.jelly.jubao.bc">
+    <springProfile name="local">
+      <appender-ref ref="CONSOLE"/>
+    </springProfile>
+    <springProfile name="testing">
+      <appender-ref ref="CONSOLE"/>
+    </springProfile>
+    <appender-ref ref="JUBAO_BILL_INFO_FILE"/>
+    <appender-ref ref="COMMON_ERROR_FILE"/>
+  </logger>
+
+</included>

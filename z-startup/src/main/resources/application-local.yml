@@ -31,13 +31,13 @@ feign:
       tech.*.facade.*: INFO
 
 
-#watt:
-#  aliyun:
-#    access-key: LTAI4FkTPgp6Y5ZneEt4yTp3
-#    secret: O8JRhJpUDlkz0SJGck0iS3XZ5RBcvu
-#    mq:
-#      default-instance: http://MQ_INST_1002266902363761_BbbwCLv4.mq-internet-access.mq-internet.aliyuncs.com:80
-#
+jelly:
+  aliyun:
+    access-key: XXXXXXXXXXXXXXXXXX
+    secret: XXXXXXXXXXXXXXXXXX
+    mq:
+      default-instance: XXXXXXXXXXXXXXXXXXXXXX
+
 #  timingtask:
 #    # 未处理订单定时任务
 #    OrderProcess:

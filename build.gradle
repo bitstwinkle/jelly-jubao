@@ -16,9 +16,9 @@ ext {
     NACOS_VERSION = '0.9.0.RELEASE'
 
     /******************** JELLY依赖版本参数 ********************/
-    JELLY_COMMONS = '1.0.4-SNAPSHOT'
-    JELLY_PLATFORM = '1.0.7-SNAPSHOT'
-    JELLY_ID_FACTORY = '1.0.1-SNAPSHOT'
+    JELLY_COMMONS = '1.1.1'
+    JELLY_PLATFORM = '1.1.2'
+    JELLY_ID_FACTORY = '1.1.1'
 }
 
 buildscript {
@@ -47,6 +47,10 @@ subprojects {
 
             maven {
                 url 'https://oss.sonatype.org/content/repositories/snapshots'
+            }
+
+            maven {
+                url 'https://oss.sonatype.org/content/repositories/releases/'
             }
         }
 

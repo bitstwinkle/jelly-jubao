@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <!-- *************** ProducerBean Configuration *************** -->
+  <bean id="jellyDefaultMQProducer" class="com.aliyun.openservices.ons.api.bean.ProducerBean" init-method="start" destroy-method="shutdown">
+    <property name="properties" >
+      <props>
+        <prop key="AccessKey">${jelly.aliyun.access-key}</prop>
+        <prop key="SecretKey">${jelly.aliyun.secret}</prop>
+        <prop key="NAMESRV_ADDR">${jelly.aliyun.mq.default-instance}</prop>
+      </props>
+    </property>
+  </bean>
+
+  <!-- *************** ConsumerBean Configuration *************** -->
+  <bean id="jellyDefaultMQConsumer" class="com.aliyun.openservices.ons.api.bean.ConsumerBean" init-method="start" destroy-method="shutdown">
+    <property name="properties" >
+      <props>
+        <prop key="GROUP_ID">GID_DEFAULT_GROUP</prop>
+        <prop key="AccessKey">${jelly.aliyun.access-key}</prop>
+        <prop key="SecretKey">${jelly.aliyun.secret}</prop>
+        <prop key="NAMESRV_ADDR">${jelly.aliyun.mq.default-instance}</prop>
+        <prop key="ConsumeThreadNums">8</prop>
+      </props>
+    </property>
+    <property name="subscriptionTable">
+      <map>
+        <!-- *********** ACCOUNT-CENTER ************ -->
+        <entry value-ref="fundUnfreezeListener">
+          <key>
+            <bean class="com.aliyun.openservices.ons.api.bean.Subscription">
+              <property name="topic" value="ACCOUNT_TOPIC"/>
+              <property name="expression" value="FUND_UNFREEZE_REQ"/>
+            </bean>
+          </key>
+        </entry>
+        <!-- *********** BILLING-CENTER ************ -->
+        <entry value-ref="billingCalcListener">
+          <key>
+            <bean class="com.aliyun.openservices.ons.api.bean.Subscription">
+              <property name="topic" value="BILLING_TOPIC"/>
+              <property name="expression" value="BILLING_CALC_REQ"/>
+            </bean>
+          </key>
+        </entry>
+      </map>
+    </property>
+  </bean>
+
+  <!-- ***********ACCOUNT_TOPIC 账户类型消息 ************ -->
+  <bean id="fundUnfreezeListener" class="tech.bitstwinkle.jelly.jubao.ac.server.listeners.FundUnfreezeListener" />
+
+  <!-- ***********BILLING_TOPIC设备消息 ************ -->
+  <bean id="billingCalcListener" class="tech.bitstwinkle.jelly.jubao.bc.server.listeners.BillingCalcListener">
+    <property name="execProducer" ref="jellyDefaultMQProducer" />
+    <property name="execMsgTopic" value="BILLING_TOPIC"/>
+    <property name="execMsgTag" value="BILLING_EXEC"/>
+  </bean>
+
+</beans>
